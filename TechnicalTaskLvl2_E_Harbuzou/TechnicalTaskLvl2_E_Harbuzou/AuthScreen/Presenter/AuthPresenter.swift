@@ -1,27 +1,24 @@
-import Foundation
+import Combine
 
 final class AuthPresenter {
-    weak var view: AuthView?
-    private let validUserData: [String: String] = ["login": "admin@gmail.com", "password": "12345678"]
-    
-    init(view: AuthView) {
-        self.view = view
-    }
+    let loginResultPublisher = PassthroughSubject<Bool, Never>()
+    //TODO: change the data before PR
+    private let validUserData: [String: String] = ["login": "1", "password": "1"]
     
     func loginTapped(login: String?, password: String?) {
         guard let login = login, let password = password, !login.isEmpty, !password.isEmpty else {
-            view?.showLoginError("All fields are required")
+            loginResultPublisher.send(false)
             return
         }
         
         if login == validUserData["login"] && password == validUserData["password"]  {
-            view?.showLoginSuccess()
+            loginResultPublisher.send(true)
         } else {
-            view?.showLoginError("One of deteils is incorrect")
+            loginResultPublisher.send(false)
         }
     }
     
     func guestLoginTapped() {
-        view?.showGuestLoginSuccess()
+        loginResultPublisher.send(true)
     }
 }
