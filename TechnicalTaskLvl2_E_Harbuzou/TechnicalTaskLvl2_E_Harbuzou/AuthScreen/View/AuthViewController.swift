@@ -82,21 +82,28 @@ final class AuthViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isSuccess in
                 if isSuccess {
-                    self?.showActivityIndicatorAndNavigate()
-                } else {
-                    self?.showErrorAlert()
+                    self?.navigateToShipList()
                 }
             }
             .store(in: &cancellables)
-    }
-    
-    private func showActivityIndicatorAndNavigate() {
-        activityIndicator.startAnimating()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            self?.activityIndicator.stopAnimating()
-            self?.navigateToShipList()
-        }
+        presenter.loadingPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isLoading in
+                if isLoading {
+                    self?.activityIndicator.startAnimating()
+                } else {
+                    self?.activityIndicator.stopAnimating()
+                }
+            }
+            .store(in: &cancellables)
+        
+        presenter.errorPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] errorMessage in
+                self?.showErrorAlert(message: errorMessage)
+            }
+            .store(in: &cancellables)
     }
     
     private func navigateToShipList() {
@@ -105,19 +112,19 @@ final class AuthViewController: UIViewController {
         present(shipListVC, animated: true)
     }
     
-    private func showErrorAlert() {
-        let alert = UIAlertController(title: "Error", message: "One of fields is invalid", preferredStyle: .alert)
+    private func showErrorAlert(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
     
     @objc private func handleLogin() {
-        let login = loginTextField.text
-        let password = passwordTextField.text
-        presenter.loginTapped(login: login, password: password)
+        presenter.loginTapped(
+            login: loginTextField.text,
+            password: passwordTextField.text)
     }
     
     @objc private func handleGuestLogin() {
-        navigateToShipList()
+        presenter.guestLoginTapped()
     }
 }
