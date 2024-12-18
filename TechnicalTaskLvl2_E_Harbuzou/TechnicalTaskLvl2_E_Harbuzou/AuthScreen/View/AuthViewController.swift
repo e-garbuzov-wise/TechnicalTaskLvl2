@@ -2,6 +2,7 @@ import UIKit
 import Combine
 
 final class AuthViewController: UIViewController {
+    private weak var coordinator: AuthCoordinator?
     private var presenter = AuthPresenter()
     private var cancellables = Set<AnyCancellable>()
     private let activityIndicator = UIActivityIndicatorView(style: .large)
@@ -36,6 +37,15 @@ final class AuthViewController: UIViewController {
         button.setTitleColor(.systemBlue, for: .normal)
         return button
     }()
+    
+    init(coordinator: AuthCoordinator) {
+            self.coordinator = coordinator
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -109,6 +119,7 @@ final class AuthViewController: UIViewController {
     private func navigateToShipList() {
         let shipListVC = ShipsListViewController()
         shipListVC.modalPresentationStyle = .fullScreen
+        shipListVC.modalTransitionStyle = .flipHorizontal
         present(shipListVC, animated: true)
     }
     

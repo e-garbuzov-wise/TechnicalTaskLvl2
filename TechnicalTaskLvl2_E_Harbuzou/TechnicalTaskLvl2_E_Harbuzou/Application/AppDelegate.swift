@@ -8,8 +8,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         window = UIWindow(frame: UIScreen.main.bounds)
-        
-        let rootViewController = Configurator.configure()
+        let navigationController = UINavigationController()
+        let rootViewController = Configurator.configure(navigationController: navigationController)
         let navigation = UINavigationController(rootViewController: rootViewController)
         
         window?.rootViewController = navigation
