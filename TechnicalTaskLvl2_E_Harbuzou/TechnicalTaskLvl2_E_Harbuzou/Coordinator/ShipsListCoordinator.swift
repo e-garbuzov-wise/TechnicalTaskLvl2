@@ -11,11 +11,12 @@ final class ShipsListCoordinator {
         self.navigationController = rootNavigationController
     }
     
-    func start() {
-        //TODO: start shipDetailesSceen
-    }
-    
     func closeProfile() {
         navigationController.popViewController(animated: true)
+    }
+    
+    func navigateToShipDetails(with ship: Ship) {
+        let detailsViewController = ShipDetailsViewController(ship: ship)
+        navigationController.pushViewController(detailsViewController, animated: true)
     }
 }

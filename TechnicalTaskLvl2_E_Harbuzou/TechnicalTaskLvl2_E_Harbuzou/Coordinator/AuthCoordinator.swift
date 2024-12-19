@@ -10,7 +10,6 @@ final class AuthCoordinator {
     func start() {
         let authVC = AuthViewController(coordinator: self)
         navigationController.setViewControllers([authVC], animated: false)
-        
     }
     
     func navigateToShipList(isGuest: Bool) {
@@ -18,7 +17,6 @@ final class AuthCoordinator {
         let shipListVC = ShipsListViewController(
             isGuest: isGuest,
             coordinator: shipsListcoordinator)
-        shipsListcoordinator.start()
         shipListVC.modalPresentationStyle = .fullScreen
         shipListVC.modalTransitionStyle = .flipHorizontal
         navigationController.pushViewController(shipListVC, animated: true)

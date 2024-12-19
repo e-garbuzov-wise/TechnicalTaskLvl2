@@ -56,13 +56,10 @@ final class AuthViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .white
         
-        [loginTextField, passwordTextField, loginButton, guestLoginButton].forEach {
+        [loginTextField, passwordTextField, loginButton, guestLoginButton, activityIndicator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
-        
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(activityIndicator)
         
         NSLayoutConstraint.activate([
             loginTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
