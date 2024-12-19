@@ -2,7 +2,7 @@ import UIKit
 import Combine
 
 final class AuthViewController: UIViewController {
-    private weak var coordinator: AuthCoordinator?
+    private var coordinator: AuthCoordinator?
     private var presenter = AuthPresenter()
     private var cancellables = Set<AnyCancellable>()
     private let activityIndicator = UIActivityIndicatorView(style: .large)
@@ -39,13 +39,13 @@ final class AuthViewController: UIViewController {
     }()
     
     init(coordinator: AuthCoordinator) {
-            self.coordinator = coordinator
-            super.init(nibName: nil, bundle: nil)
-        }
-
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
+        self.coordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,10 +90,8 @@ final class AuthViewController: UIViewController {
     private func bindPresenter() {
         presenter.loginResultPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] isSuccess in
-                if isSuccess {
-                    self?.navigateToShipList()
-                }
+            .sink { [weak self] isGuest in
+                self?.coordinator?.navigateToShipList(isGuest: isGuest)
             }
             .store(in: &cancellables)
         
@@ -116,13 +114,6 @@ final class AuthViewController: UIViewController {
             .store(in: &cancellables)
     }
     
-    private func navigateToShipList() {
-        let shipListVC = ShipsListViewController()
-        shipListVC.modalPresentationStyle = .fullScreen
-        shipListVC.modalTransitionStyle = .flipHorizontal
-        present(shipListVC, animated: true)
-    }
-    
     private func showErrorAlert(message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
@@ -136,6 +127,6 @@ final class AuthViewController: UIViewController {
     }
     
     @objc private func handleGuestLogin() {
-        presenter.guestLoginTapped()
+        coordinator?.navigateToShipList(isGuest: true)
     }
 }

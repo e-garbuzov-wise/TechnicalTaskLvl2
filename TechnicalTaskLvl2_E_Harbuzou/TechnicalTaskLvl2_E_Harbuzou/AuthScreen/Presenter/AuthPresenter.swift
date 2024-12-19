@@ -21,14 +21,10 @@ final class AuthPresenter {
         authService.validateUser(login: login, password: password) { [weak self] success in
             self?.loadingPublisher.send(false)
             if success {
-                self?.loginResultPublisher.send(true)
+                self?.loginResultPublisher.send(false)
             } else {
                 self?.errorPublisher.send("Invalid login or password.")
             }
         }
-    }
-    
-    func guestLoginTapped() {
-        loginResultPublisher.send(true)
     }
 }
