@@ -16,17 +16,87 @@ final class ShipsListViewController: UIViewController {
     }
     
     private let ships: [Ship] = [
-        Ship(name: "Black Pearl", type: "Pirate Ship", year: 1710, image: UIImage(named: "black_pearl")),
-        Ship(name: "USS Enterprise", type: "Starship", year: 2245, image: UIImage(named: "black_pearl")),
-        Ship(name: "HMS Victory", type: "Warship", year: 1765, image: UIImage(named: "black_pearl")),
-        Ship(name: "Titanic", type: "Ocean Liner", year: 1912, image: UIImage(named: "black_pearl")),
-        Ship(name: "Queen Mary 2", type: "Cruise Ship", year: 2004, image: UIImage(named: "black_pearl")),
-        Ship(name: "Bismarck", type: "Battleship", year: 1939, image: UIImage(named: "black_pearl")),
-        Ship(name: "Santa Maria", type: "Exploration Ship", year: 1492, image: UIImage(named: "black_pearl")),
-        Ship(name: "Endeavour", type: "Research Vessel", year: 1764, image: UIImage(named: "black_pearl")),
-        Ship(name: "Argo", type: "Mythological Ship", year: -1300, image: UIImage(named: "black_pearl")),
-        Ship(name: "Yamato", type: "Battleship", year: 1940, image: UIImage(named: "black_pearl"))
+        Ship(name: "Black Pearl",
+             image: UIImage(named: "black_pearl"),
+             type: "Pirate Ship",
+             builtYear: "1710",
+             weight: "500 tons",
+             homePort: "Tortuga",
+             roles: "Piracy, Treasure Hunting"),
+        
+        Ship(name: "USS Enterprise",
+             image: UIImage(named: "black_pearl"),
+             type: "Starship",
+             builtYear: "2245",
+             weight: "190,000 metric tons",
+             homePort: "Earth Spacedock",
+             roles: "Exploration, Defense"),
+        
+        Ship(name: "HMS Victory",
+             image: UIImage(named: "black_pearl"),
+             type: "Warship",
+             builtYear: "1765",
+             weight: "3,556 tons",
+             homePort: "Portsmouth, UK",
+             roles: "Combat, Flagship"),
+        
+        Ship(name: "Titanic",
+             image: UIImage(named: "black_pearl"),
+             type: "Ocean Liner",
+             builtYear: "1912",
+             weight: "46,328 tons",
+             homePort: "Southampton, UK",
+             roles: "Passenger Transport"),
+        
+        Ship(name: "Queen Mary 2",
+             image: UIImage(named: "black_pearl"),
+             type: "Cruise Ship",
+             builtYear: "2004",
+             weight: "148,528 tons",
+             homePort: "Southampton, UK",
+             roles: "Luxury Cruises"),
+        
+        Ship(name: "Bismarck",
+             image: UIImage(named: "black_pearl"),
+             type: "Battleship",
+             builtYear: "1939",
+             weight: "50,300 tons",
+             homePort: "Hamburg, Germany",
+             roles: "Naval Warfare"),
+        
+        Ship(name: "Santa Maria",
+             image: UIImage(named: "black_pearl"),
+             type: "Exploration Ship",
+             builtYear: "1492",
+             weight: "100 tons",
+             homePort: "Palos de la Frontera, Spain",
+             roles: "Exploration"),
+        
+        Ship(name: "Endeavour",
+             image: UIImage(named: "black_pearl"),
+             type: "Research Vessel",
+             builtYear: "1764",
+             weight: "368 tons",
+             homePort: "Plymouth, UK",
+             roles: "Scientific Exploration"),
+        
+        Ship(name: "Argo",
+             image: UIImage(named: "black_pearl"),
+             type: "Mythological Ship",
+             builtYear: "-1300",
+             weight: "Unknown",
+             homePort: "Iolcos, Greece",
+             roles: "Quest for the Golden Fleece"),
+        
+        Ship(name: "Yamato",
+             image: UIImage(named: "black_pearl"),
+             type: "Battleship",
+             builtYear: "1940",
+             weight: "72,800 tons",
+             homePort: "Kure, Japan",
+             roles: "Naval Warfare")
     ]
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,6 +150,8 @@ extension ShipsListViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
+            tableView.deselectRow(at: indexPath, animated: true)
+            let selectedShip = ships[indexPath.row]
+            coordinator?.navigateToShipDetails(with: selectedShip)
+        }
 }

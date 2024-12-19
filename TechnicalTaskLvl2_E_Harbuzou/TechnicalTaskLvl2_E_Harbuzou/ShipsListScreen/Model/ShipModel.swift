@@ -2,7 +2,10 @@ import UIKit
 
 struct Ship {
     let name: String
-    let type: String
-    let year: Int
     let image: UIImage?
+    let type: String
+    let builtYear: String
+    let weight: String
+    let homePort: String
+    let roles: String
 }

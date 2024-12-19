@@ -74,6 +74,6 @@ final class ShipCell: UITableViewCell {
         shipImageView.image = ship.image
         nameLabel.text = ship.name
         typeLabel.text = ship.type
-        yearLabel.text = "Built in \(ship.year)"
+        yearLabel.text = "Built in \(ship.builtYear)"
     }
 }
