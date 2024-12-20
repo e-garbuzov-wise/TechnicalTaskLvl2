@@ -1,20 +1,23 @@
 import UIKit
+import Combine
 
 final class ShipDetailsPresenter {
     private let ship: Ship
+    private var cancellables: Set<AnyCancellable> = []
     
     init(ship: Ship) {
         self.ship = ship
     }
     
-    func configure() -> ShipDetailsModel {
-        return ShipDetailsModel(
-            name: ship.name,
-            image: ship.image,
-            type: ship.type,
-            builtYear: ship.builtYear,
-            weight: ship.weight,
-            homePort: ship.homePort,
-            roles: ship.roles)
+    func configure() -> Ship {
+        return ship
+    }
+    
+    func loadImage(from url: URL, completion: @escaping (UIImage?) -> Void) {
+        ImageLoader.shared.loadImage(from: url)
+            .sink { image in
+                completion(image)
+            }
+            .store(in: &cancellables)
     }
 }

@@ -108,11 +108,20 @@ final class ShipDetailsViewController: UIViewController {
     private func configureUI() {
         let model = presenter.configure()
         shipNameLabel.text = model.name
-        shipImageView.image = model.image
-        shipTypeLabel.text = "Ship type: \(model.type)"
-        builtYearLabel.text = "Built year: \(model.builtYear)"
-        weightLabel.text = "Weight in kg: \(model.weight)"
-        homePortLabel.text = "Home port: \(model.homePort)"
-        rolesLabel.text = "Roles: \(model.roles)"
+        if let url = model.image {
+            presenter.loadImage(from: url) { [weak self] image in
+                self?.shipImageView.image = image ?? UIImage(named: Constants.mockImage)
+            }
+        } else {
+            shipImageView.image = UIImage(named: Constants.mockImage)
+        }
+        
+        guard let buildYear = model.builtYear,
+              let homePort = model.homePort else { return }
+        shipTypeLabel.text = "\(Constants.shipType + model.type)"
+        builtYearLabel.text = "\(Constants.buildYear + String(buildYear))"
+        weightLabel.text = "\(Constants.weight + model.weight)"
+        homePortLabel.text = "\(Constants.homePort + homePort)"
+        rolesLabel.text = "\(Constants.roles + model.rolesDescription)"
     }
 }
