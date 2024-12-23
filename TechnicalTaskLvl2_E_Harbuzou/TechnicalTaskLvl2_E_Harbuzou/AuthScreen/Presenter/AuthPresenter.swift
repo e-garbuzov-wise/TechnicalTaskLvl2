@@ -35,7 +35,7 @@ final class AuthPresenter {
     }
     
     private func isValidLogin(_ login: String) -> Bool {
-        let loginRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let loginRegex =  ".+@.+"
         let loginTest = NSPredicate(format: "SELF MATCHES %@", loginRegex)
         return loginTest.evaluate(with: login)
     }
