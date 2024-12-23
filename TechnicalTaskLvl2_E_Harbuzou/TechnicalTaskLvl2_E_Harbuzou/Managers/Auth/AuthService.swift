@@ -5,7 +5,7 @@ protocol Authentifable {
 }
 
 final class AuthService: Authentifable {
-    private let validUserData: [String: String] = ["login": "1", "password": "1"]
+    private let validUserData: [String: String] = ["login": "admin@gmail.com", "password": "123456789"]
     
     func validateUser(login: String, password: String, completion: @escaping (Bool) -> Void) {
         DispatchQueue.global().asyncAfter(deadline: .now() + 1) {

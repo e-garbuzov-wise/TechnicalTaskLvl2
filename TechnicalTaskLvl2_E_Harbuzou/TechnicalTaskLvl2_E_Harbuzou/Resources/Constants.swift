@@ -13,5 +13,8 @@ enum Constants {
     static let roles = "Roles: "
     static let tons = "tons"
     static let unknown = "Unknown"
+    static let thankYou = "Thank You"
+    static let thankYouMore = "Thank you for trialing this app."
+    static let okButton = "OK"
     static let noInternetWarning = "No internet connection. You’re in Offline mode"
 }

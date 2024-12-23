@@ -83,7 +83,19 @@ final class ShipsListViewController: UIViewController {
     }
     
     @objc private func logoutButtonTapped() {
-        coordinator?.closeProfile()
+        if isGuest {
+             let alert = UIAlertController(
+                title: Constants.thankYou,
+                message: Constants.thankYouMore,
+                 preferredStyle: .alert
+             )
+            alert.addAction(UIAlertAction(title: Constants.okButton, style: .default, handler: { [weak self] _ in
+                 self?.coordinator?.closeProfile()
+             }))
+             present(alert, animated: true, completion: nil)
+        } else {
+            self.coordinator?.closeProfile()
+        }
     }
 }
 
