@@ -47,7 +47,7 @@ final class ShipsListViewController: UIViewController {
     }
     
     func updateShips(_ ships: [Ship]) {
-        self.ships = ships
+        self.ships = ships.sorted { $0.name.lowercased() < $1.name.lowercased() }
         tableView.reloadData()
     }
     
