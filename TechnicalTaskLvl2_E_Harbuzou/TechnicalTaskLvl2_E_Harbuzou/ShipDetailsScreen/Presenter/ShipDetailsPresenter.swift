@@ -5,8 +5,11 @@ final class ShipDetailsPresenter {
     private let ship: Ship
     private var cancellables: Set<AnyCancellable> = []
     
-    init(ship: Ship) {
+    private let imageLoader: ImageLoader
+
+    init(ship: Ship, locator: ServiceLocator = .shared) {
         self.ship = ship
+        self.imageLoader = locator.imageLoader
     }
     
     func configure() -> Ship {
@@ -14,7 +17,7 @@ final class ShipDetailsPresenter {
     }
     
     func loadImage(from url: URL, completion: @escaping (UIImage?) -> Void) {
-        ImageLoader.shared.loadImage(from: url)
+        imageLoader.loadImage(from: url)
             .sink { image in
                 completion(image)
             }

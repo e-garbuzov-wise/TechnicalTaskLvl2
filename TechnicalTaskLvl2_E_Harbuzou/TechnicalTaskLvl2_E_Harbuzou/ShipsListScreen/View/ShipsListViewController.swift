@@ -19,11 +19,12 @@ final class ShipsListViewController: UIViewController {
         return label
     }()
     
-    init(isGuest: Bool, coordinator: ShipsListCoordinator) {
+    init(isGuest: Bool, coordinator: ShipsListCoordinator, locator: ServiceLocator = .shared) {
         self.isGuest = isGuest
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
-        self.presenter = ShipsListPresenter(view: self)
+    
+        self.presenter = ShipsListPresenter(view: self, locator: locator)
     }
     
     required init?(coder: NSCoder) {
@@ -37,7 +38,9 @@ final class ShipsListViewController: UIViewController {
         setupTableView()
         setupNoInternetLabel()
         presenter?.loadShips()
-        NetworkMonitor.shared.observeNetworkStatus { isConnected in
+        
+        let networkMonitor = ServiceLocator.shared.networkMonitor
+        networkMonitor.observeNetworkStatus { isConnected in
             self.noInternetLabel.isHidden = isConnected
         }
         .store(in: &cancellables)
