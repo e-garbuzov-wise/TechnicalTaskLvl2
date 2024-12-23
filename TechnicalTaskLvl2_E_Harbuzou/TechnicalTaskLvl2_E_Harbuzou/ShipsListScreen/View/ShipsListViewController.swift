@@ -119,4 +119,15 @@ extension ShipsListViewController: UITableViewDataSource, UITableViewDelegate {
         let selectedShip = ships[indexPath.row]
         coordinator?.navigateToShipDetails(with: selectedShip)
     }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+          if editingStyle == .delete {
+              let shipToDelete = ships[indexPath.row]
+
+              CoreDataManager.shared.deleteShip(shipToDelete)
+              
+              ships.remove(at: indexPath.row)
+              tableView.deleteRows(at: [indexPath], with: .automatic)
+          }
+      }
 }

@@ -40,7 +40,10 @@ final class ShipsListPresenter {
                     }
                 },
                 receiveValue: { [weak self] ships in
-                    self?.view?.updateShips(ships)
+                    guard let self = self else { return }
+                    
+                    self.view?.updateShips(ships)
+                    self.coreDataManager.saveShips(ships)
                 }
             )
             .store(in: &cancellables)
