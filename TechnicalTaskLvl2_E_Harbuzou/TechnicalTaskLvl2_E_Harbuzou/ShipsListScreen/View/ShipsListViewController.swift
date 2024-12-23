@@ -1,4 +1,5 @@
 import UIKit
+import Combine
 
 final class ShipsListViewController: UIViewController {
     private let tableView = UITableView()
@@ -6,6 +7,17 @@ final class ShipsListViewController: UIViewController {
     private var presenter: ShipsListPresenter?
     private let isGuest: Bool
     private var coordinator: ShipsListCoordinator?
+    private var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var noInternetLabel: UILabel = {
+        let label = UILabel()
+        label.text = Constants.noInternetWarning
+        label.textColor = .white
+        label.backgroundColor = .red
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
     
     init(isGuest: Bool, coordinator: ShipsListCoordinator) {
         self.isGuest = isGuest
@@ -18,15 +30,33 @@ final class ShipsListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        presenter?.loadShips()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setUpNavigationBar()
         setupTableView()
+        setupNoInternetLabel()
+        presenter?.loadShips()
+        NetworkMonitor.shared.observeNetworkStatus { isConnected in
+            self.noInternetLabel.isHidden = isConnected
+        }
+        .store(in: &cancellables)
+    }
+    
+    func updateShips(_ ships: [Ship]) {
+        self.ships = ships
+        tableView.reloadData()
+    }
+    
+    private func setupNoInternetLabel() {
+        noInternetLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(noInternetLabel)
+        NSLayoutConstraint.activate([
+            noInternetLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            noInternetLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            noInternetLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            noInternetLabel.heightAnchor.constraint(equalToConstant: 40)
+        ])
     }
     
     private func setupTableView() {
@@ -47,11 +77,6 @@ final class ShipsListViewController: UIViewController {
             style: .plain,
             target: self,
             action: #selector(logoutButtonTapped))
-    }
-    
-    func updateShips(_ ships: [Ship]) {
-        self.ships = ships
-        tableView.reloadData()
     }
     
     @objc private func logoutButtonTapped() {

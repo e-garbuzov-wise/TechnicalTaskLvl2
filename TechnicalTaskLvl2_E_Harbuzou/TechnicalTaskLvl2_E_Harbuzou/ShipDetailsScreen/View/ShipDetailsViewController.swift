@@ -1,7 +1,19 @@
 import UIKit
+import Combine
 
 final class ShipDetailsViewController: UIViewController {
     private let presenter: ShipDetailsPresenter
+    private var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var noInternetLabel: UILabel = {
+        let label = UILabel()
+        label.text = Constants.noInternetWarning
+        label.textColor = .white
+        label.backgroundColor = .red
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
     
     private let shipNameLabel: UILabel = {
         let label = UILabel()
@@ -68,6 +80,10 @@ final class ShipDetailsViewController: UIViewController {
         view.backgroundColor = .white
         setupUI()
         configureUI()
+        NetworkMonitor.shared.observeNetworkStatus { isConnected in
+            self.noInternetLabel.isHidden = isConnected
+        }
+        .store(in: &cancellables)
     }
     
     private func setupUI() {
@@ -84,7 +100,7 @@ final class ShipDetailsViewController: UIViewController {
         infoStackView.spacing = 16
         infoStackView.distribution = .fillEqually
         
-        [shipNameLabel, shipImageView, infoStackView].forEach {
+        [shipNameLabel, shipImageView, infoStackView, noInternetLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
@@ -102,6 +118,11 @@ final class ShipDetailsViewController: UIViewController {
             infoStackView.topAnchor.constraint(equalTo: shipImageView.bottomAnchor, constant: 16),
             infoStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             infoStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            noInternetLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            noInternetLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            noInternetLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            noInternetLabel.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
     
