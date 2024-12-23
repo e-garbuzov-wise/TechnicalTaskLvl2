@@ -4,7 +4,7 @@ final class CoreDataManager {
     static let shared = CoreDataManager()
     
     lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "ShipsModel")
+        let container = NSPersistentContainer(name: "ShipCoreDataModel")
         container.loadPersistentStores { _, error in
             if let error = error {
                 fatalError("Failed to load Core Data stack: \(error)")
@@ -55,5 +55,20 @@ extension CoreDataManager {
         }
         
         saveContext()
+    }
+    
+    func deleteShip(_ ship: Ship) {
+        let fetchRequest: NSFetchRequest<ShipEntity> = ShipEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "name == %@", ship.name)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            for object in results {
+                context.delete(object)
+            }
+            saveContext()
+        } catch {
+            print("Failed to delete ship: \(error)")
+        }
     }
 }

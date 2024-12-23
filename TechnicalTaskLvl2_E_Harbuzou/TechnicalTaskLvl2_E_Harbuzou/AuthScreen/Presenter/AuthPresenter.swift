@@ -1,3 +1,4 @@
+import Foundation
 import Combine
 
 final class AuthPresenter {
@@ -12,8 +13,13 @@ final class AuthPresenter {
     }
     
     func loginTapped(login: String?, password: String?) {
-        guard let login = login, let password = password, !login.isEmpty, !password.isEmpty else {
-            errorPublisher.send("Fields cannot be empty.")
+        guard let login = login, !login.isEmpty, isValidLogin(login) else {
+            errorPublisher.send("Invalid login format.")
+            return
+        }
+        
+        guard let password = password, !password.isEmpty else {
+            errorPublisher.send("Password cannot be empty.")
             return
         }
         
@@ -26,5 +32,11 @@ final class AuthPresenter {
                 self?.errorPublisher.send("Invalid login or password.")
             }
         }
+    }
+    
+    private func isValidLogin(_ login: String) -> Bool {
+        let loginRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let loginTest = NSPredicate(format: "SELF MATCHES %@", loginRegex)
+        return loginTest.evaluate(with: login)
     }
 }

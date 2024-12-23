@@ -19,11 +19,12 @@ final class ShipsListViewController: UIViewController {
         return label
     }()
     
-    init(isGuest: Bool, coordinator: ShipsListCoordinator) {
+    init(isGuest: Bool, coordinator: ShipsListCoordinator, locator: ServiceLocator = .shared) {
         self.isGuest = isGuest
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
-        self.presenter = ShipsListPresenter(view: self)
+    
+        self.presenter = ShipsListPresenter(view: self, locator: locator)
     }
     
     required init?(coder: NSCoder) {
@@ -37,7 +38,9 @@ final class ShipsListViewController: UIViewController {
         setupTableView()
         setupNoInternetLabel()
         presenter?.loadShips()
-        NetworkMonitor.shared.observeNetworkStatus { isConnected in
+        
+        let networkMonitor = ServiceLocator.shared.networkMonitor
+        networkMonitor.observeNetworkStatus { isConnected in
             self.noInternetLabel.isHidden = isConnected
         }
         .store(in: &cancellables)
@@ -80,7 +83,19 @@ final class ShipsListViewController: UIViewController {
     }
     
     @objc private func logoutButtonTapped() {
-        coordinator?.closeProfile()
+        if isGuest {
+             let alert = UIAlertController(
+                title: Constants.thankYou,
+                message: Constants.thankYouMore,
+                 preferredStyle: .alert
+             )
+            alert.addAction(UIAlertAction(title: Constants.okButton, style: .default, handler: { [weak self] _ in
+                 self?.coordinator?.closeProfile()
+             }))
+             present(alert, animated: true, completion: nil)
+        } else {
+            self.coordinator?.closeProfile()
+        }
     }
 }
 
@@ -104,4 +119,15 @@ extension ShipsListViewController: UITableViewDataSource, UITableViewDelegate {
         let selectedShip = ships[indexPath.row]
         coordinator?.navigateToShipDetails(with: selectedShip)
     }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+          if editingStyle == .delete {
+              let shipToDelete = ships[indexPath.row]
+
+              CoreDataManager.shared.deleteShip(shipToDelete)
+              
+              ships.remove(at: indexPath.row)
+              tableView.deleteRows(at: [indexPath], with: .automatic)
+          }
+      }
 }

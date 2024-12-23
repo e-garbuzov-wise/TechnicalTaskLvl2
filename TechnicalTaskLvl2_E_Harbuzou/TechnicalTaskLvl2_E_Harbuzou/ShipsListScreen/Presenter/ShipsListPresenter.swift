@@ -4,10 +4,16 @@ import UIKit
 final class ShipsListPresenter {
     private var cancellables: Set<AnyCancellable> = []
     private weak var view: ShipsListViewController?
-    private let coreDataManager = CoreDataManager.shared
     
-    init(view: ShipsListViewController) {
+    private let coreDataManager: CoreDataManager
+    private let networkManager: NetworkManager
+    private let imageLoader: ImageLoader
+    
+    init(view: ShipsListViewController, locator: ServiceLocator = .shared) {
         self.view = view
+        self.coreDataManager = locator.coreDataManager
+        self.networkManager = locator.networkManager
+        self.imageLoader = locator.imageLoader
     }
     
     func loadShips() {
@@ -26,7 +32,7 @@ final class ShipsListPresenter {
         if !cachedShips.isEmpty {
             view?.updateShips(cachedShips)
         }
-        NetworkManager.shared.fetchShips()
+        networkManager.fetchShips()
             .sink(
                 receiveCompletion: { completion in
                     if case let .failure(error) = completion {
@@ -34,14 +40,17 @@ final class ShipsListPresenter {
                     }
                 },
                 receiveValue: { [weak self] ships in
-                    self?.view?.updateShips(ships)
+                    guard let self = self else { return }
+                    
+                    self.view?.updateShips(ships)
+                    self.coreDataManager.saveShips(ships)
                 }
             )
             .store(in: &cancellables)
     }
     
     func loadImage(from url: URL, completion: @escaping (UIImage?) -> Void) {
-        ImageLoader.shared.loadImage(from: url)
+        imageLoader.loadImage(from: url)
             .sink { image in
                 completion(image)
             }
